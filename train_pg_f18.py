@@ -180,11 +180,11 @@ class Agent(object):
         if self.discrete:
             sy_logits_na = policy_parameters
             # YOUR_CODE_HERE
-            sy_sampled_ac = None
+            sy_sampled_ac = tf.random.multinomial(logits=sy_logits_na, num_samples=1)
         else:
             sy_mean, sy_logstd = policy_parameters
             # YOUR_CODE_HERE
-            sy_sampled_ac = None
+            sy_sampled_ac = (sy_logstd * tf.random.normal([1], mean=0.0, stddev=1.0)) + sy_mean
         return sy_sampled_ac
 
     #========================================================================================#
