@@ -217,11 +217,12 @@ class Agent(object):
         if self.discrete:
             sy_logits_na = policy_parameters
             # YOUR_CODE_HERE
-            sy_logprob_n = None
+            sy_logprob_n = tf.losses.sparse_softmax_cross_entropy(labels=sy_ac_na, logits=sy_logits_na)
         else:
             sy_mean, sy_logstd = policy_parameters
             # YOUR_CODE_HERE
-            sy_logprob_n = None
+            dist = tf.distributions.Normal(loc=sy_mean, scale=tf.exp(sy_logstd))
+            sy_logprob_n = tf.reduce_sum(dist.log_prob(sy_ac_na), 1)
         return sy_logprob_n
 
     def build_computation_graph(self):
