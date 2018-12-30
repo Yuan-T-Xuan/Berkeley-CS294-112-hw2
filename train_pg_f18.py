@@ -38,8 +38,12 @@ def build_mlp(input_placeholder, output_size, scope, n_layers, size, activation=
         Hint: use tf.layers.dense    
     """
     # YOUR CODE HERE
-    raise NotImplementedError
-    return output_placeholder
+    with tf.variable_scope(scope):
+        layer = input_placeholder
+        for i in range(n_layers):
+            layer = tf.layers.dense(layer, size, activation=activation, name="hidden_"+str(i+1))
+        layer = tf.layers.dense(layer, output_size, activation=output_activation, name="output")
+    return layer
 
 def pathlength(path):
     return len(path["reward"])
