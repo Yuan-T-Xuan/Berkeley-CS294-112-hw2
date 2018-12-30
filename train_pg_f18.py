@@ -263,7 +263,9 @@ class Agent(object):
         #                           ----------PROBLEM 2----------
         # Loss Function and Training Operation
         #========================================================================================#
-        loss = None # YOUR CODE HERE
+        # YOUR CODE HERE
+        loss = -1.0 * tf.reduce_mean(tf.multiply(self.sy_logprob_n, self.sy_adv_n))
+        #
         self.update_op = tf.train.AdamOptimizer(self.learning_rate).minimize(loss)
 
         #========================================================================================#
