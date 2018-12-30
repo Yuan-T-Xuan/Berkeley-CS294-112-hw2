@@ -141,12 +141,12 @@ class Agent(object):
         raise NotImplementedError
         if self.discrete:
             # YOUR_CODE_HERE
-            sy_logits_na = None
+            sy_logits_na = build_mlp(sy_ob_no, self.ac_dim, "policy_forward_pass_discrete", self.n_layers, self.size, output_activation=tf.nn.softmax)
             return sy_logits_na
         else:
             # YOUR_CODE_HERE
-            sy_mean = None
-            sy_logstd = None
+            sy_mean = build_mlp(sy_ob_no, self.ac_dim, "policy_forward_pass_continuous", self.n_layers, self.size)
+            sy_logstd = tf.get_variable("policy_forward_pass_logstd", shape=[self.ac_dim], dtype=tf.float32)
             return (sy_mean, sy_logstd)
 
     #========================================================================================#
