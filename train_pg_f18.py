@@ -313,8 +313,9 @@ class Agent(object):
             #====================================================================================#
             #                           ----------PROBLEM 3----------
             #====================================================================================#
-            raise NotImplementedError
-            ac = None # YOUR CODE HERE
+            # YOUR CODE HERE
+            ac = self.sy_sampled_ac.run(feed_dict={self.sy_ob_no: ob.reshape((1, -1))})
+            #
             ac = ac[0]
             acs.append(ac)
             ob, rew, done, _ = env.step(ac)
@@ -397,11 +398,21 @@ class Agent(object):
             like the 'ob_no' and 'ac_na' above. 
         """
         # YOUR_CODE_HERE
-        if self.reward_to_go:
-            raise NotImplementedError
-        else:
-            raise NotImplementedError
-        return q_n
+        q_n = list()
+        for i in range(len(re_n)):
+            curr_path = list(re_n[i])[::-1]
+            tmp_q_n = list()
+            tmp_q_n.append(curr_path[0])
+            for j in curr_path[1:]:
+                tmp_q_n.append(tmp_q_n[-1] * self.gamma + j)
+            tmp_q_n = tmp_q_n[::-1]
+            if not self.reward_to_go:
+                mult = 1.0
+                for j, c in enumerate(tmp_q_n):
+                    tmp_q_n[j] = c * mult
+                    mult *= self.gamma
+            q_n += tmp_q_n
+        return np.array(q_n)
 
     def compute_advantage(self, ob_no, q_n):
         """
@@ -467,8 +478,8 @@ class Agent(object):
         if self.normalize_advantages:
             # On the next line, implement a trick which is known empirically to reduce variance
             # in policy gradient methods: normalize adv_n to have mean zero and std=1.
-            raise NotImplementedError
-            adv_n = None # YOUR_CODE_HERE
+            # YOUR_CODE_HERE
+            adv_n = (adv_n - np.mean(adv_n)) / np.std(adv_n)
         return q_n, adv_n
 
     def update_parameters(self, ob_no, ac_na, q_n, adv_n):
@@ -519,8 +530,15 @@ class Agent(object):
         # and after an update, and then log them below. 
 
         # YOUR_CODE_HERE
-        raise NotImplementedError
-
+        loss = -1.0 * tf.reduce_mean(tf.multiply(self.sy_logprob_n, self.sy_adv_n))
+        _feed_dict = {
+            self.sy_ob_no: ob_no,
+            self.sy_ac_na: ac_na,
+            self.sy_adv_n: q_n
+        }
+        print("before update: ", loss.run(feed_dict=_feed_dict))
+        self.update_op.run(feed_dict=_feed_dict)
+        print("after update: ", loss.run(feed_dict=_feed_dict))
 
 def train_PG(
         exp_name,
