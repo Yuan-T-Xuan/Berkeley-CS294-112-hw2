@@ -177,7 +177,7 @@ class Agent(object):
         if self.discrete:
             sy_logits_na = policy_parameters
             # YOUR_CODE_HERE
-            sy_sampled_ac = tf.random.multinomial(logits=sy_logits_na, num_samples=1)
+            sy_sampled_ac = tf.reshape(tf.random.multinomial(logits=sy_logits_na, num_samples=1), [-1])
         else:
             sy_mean, sy_logstd = policy_parameters
             # YOUR_CODE_HERE
@@ -260,7 +260,7 @@ class Agent(object):
         # Loss Function and Training Operation
         #========================================================================================#
         # YOUR CODE HERE
-        loss = -1.0 * tf.reduce_mean(tf.multiply(self.sy_logprob_n, self.sy_adv_n))
+        loss = tf.reduce_mean(tf.multiply(self.sy_logprob_n, self.sy_adv_n))
         #
         self.update_op = tf.train.AdamOptimizer(self.learning_rate).minimize(loss)
 
@@ -526,15 +526,12 @@ class Agent(object):
         # and after an update, and then log them below. 
 
         # YOUR_CODE_HERE
-        loss = -1.0 * tf.reduce_mean(tf.multiply(self.sy_logprob_n, self.sy_adv_n))
         _feed_dict = {
             self.sy_ob_no: ob_no,
             self.sy_ac_na: ac_na,
             self.sy_adv_n: q_n
         }
-        print("before update: ", loss.run(feed_dict=_feed_dict))
-        self.update_op.run(feed_dict=_feed_dict)
-        print("after update: ", loss.run(feed_dict=_feed_dict))
+        self.sess.run(self.update_op, feed_dict=_feed_dict)
 
 def train_PG(
         exp_name,
