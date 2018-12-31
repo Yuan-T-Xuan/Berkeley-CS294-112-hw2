@@ -139,7 +139,7 @@ class Agent(object):
         """
         if self.discrete:
             # YOUR_CODE_HERE
-            sy_logits_na = build_mlp(sy_ob_no, self.ac_dim, "policy_forward_pass_discrete", self.n_layers, self.size, output_activation=tf.nn.softmax)
+            sy_logits_na = build_mlp(sy_ob_no, self.ac_dim, "policy_forward_pass_discrete", self.n_layers, self.size)
             return sy_logits_na
         else:
             # YOUR_CODE_HERE
@@ -213,7 +213,7 @@ class Agent(object):
         if self.discrete:
             sy_logits_na = policy_parameters
             # YOUR_CODE_HERE
-            sy_logprob_n = tf.losses.sparse_softmax_cross_entropy(labels=sy_ac_na, logits=sy_logits_na)
+            sy_logprob_n = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=sy_ac_na, logits=sy_logits_na)
         else:
             sy_mean, sy_logstd = policy_parameters
             # YOUR_CODE_HERE
