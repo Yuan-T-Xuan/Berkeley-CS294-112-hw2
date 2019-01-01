@@ -181,7 +181,7 @@ class Agent(object):
         else:
             sy_mean, sy_logstd = policy_parameters
             # YOUR_CODE_HERE
-            sy_sampled_ac = (sy_logstd * tf.random.normal([1], mean=0.0, stddev=1.0)) + sy_mean
+            sy_sampled_ac = (tf.exp(sy_logstd) * tf.random.normal(tf.shape(sy_mean))) + sy_mean
         return sy_sampled_ac
 
     #========================================================================================#
@@ -217,8 +217,8 @@ class Agent(object):
         else:
             sy_mean, sy_logstd = policy_parameters
             # YOUR_CODE_HERE
-            dist = tf.distributions.Normal(loc=sy_mean, scale=tf.exp(sy_logstd))
-            sy_logprob_n = tf.reduce_sum(dist.log_prob(sy_ac_na), 1)
+            sy_normalized_ac_na = (sy_ac_na - sy_mean) / tf.exp(sy_logstd)
+            sy_logprob_n = 0.5 * tf.reduce_sum(sy_normalized_ac_na * sy_normalized_ac_na, 1)
         return sy_logprob_n
 
     def build_computation_graph(self):
