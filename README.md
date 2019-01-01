@@ -1,4 +1,8 @@
-# CS294-112 HW 2: Policy Gradient
+Finished.
+
+To learn how to run it, please see Section 5 and 7 in the homework instruction.
+
+# (Original README) CS294-112 HW 2: Policy Gradient
 
 Dependencies:
  * Python **3.5**
